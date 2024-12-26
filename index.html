@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторна робота №3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .employee-form {
+            margin-bottom: 20px;
+        }
+        .employee {
+            margin-bottom: 10px;
+        }
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Розрахунок середнього стажу роботи</h1>
+    <form id="employeeForm" class="employee-form">
+        <div id="employeeInputs">
+
+        </div>
+        <button type="button" id="calculateButton">Розрахувати середній стаж</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const employeeCount = 5;
+            const employeeInputs = document.getElementById('employeeInputs');
+            const calculateButton = document.getElementById('calculateButton');
+            const resultDiv = document.getElementById('result');
+
+
+            for (let i = 0; i < employeeCount; i++) {
+                const employeeDiv = document.createElement('div');
+                employeeDiv.className = 'employee';
+
+                const nameLabel = document.createElement('label');
+                nameLabel.textContent = `Прізвище співробітника ${i + 1}: `;
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.name = `employeeName${i + 1}`;
+                nameInput.required = true;
+
+                const dateLabel = document.createElement('label');
+                dateLabel.textContent = ' Дата прийому на роботу: ';
+                const dateInput = document.createElement('input');
+                dateInput.type = 'date';
+                dateInput.name = `employeeDate${i + 1}`;
+                dateInput.required = true;
+
+                employeeDiv.appendChild(nameLabel);
+                employeeDiv.appendChild(nameInput);
+                employeeDiv.appendChild(dateLabel);
+                employeeDiv.appendChild(dateInput);
+                employeeInputs.appendChild(employeeDiv);
+            }
+
+            calculateButton.addEventListener('click', () => {
+                const today = new Date();
+                let totalYears = 0;
+                let validEntries = 0;
+
+                for (let i = 0; i < employeeCount; i++) {
+                    const dateInput = document.querySelector(`input[name='employeeDate${i + 1}']`);
+
+                    if (dateInput.value) {
+                        const startDate = new Date(dateInput.value);
+                        const years = today.getFullYear() - startDate.getFullYear();
+                        const monthsDiff = today.getMonth() - startDate.getMonth();
+
+                        const adjustedYears = monthsDiff < 0 || (monthsDiff === 0 && today.getDate() < startDate.getDate()) ? years - 1 : years;
+
+                        totalYears += adjustedYears;
+                        validEntries++;
+                    }
+                }
+
+                if (validEntries > 0) {
+                    const averageYears = Math.floor(totalYears / validEntries);
+                    resultDiv.textContent = `Середній стаж роботи: ${averageYears} років`;
+                } else {
+                    resultDiv.textContent = 'Будь ласка, заповніть коректні дати для всіх співробітників.';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
